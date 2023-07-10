@@ -164,6 +164,7 @@
     <ResourceCompile Include="Backgrounder.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="..\wdc.exe" />
     <None Include="..\强制结束运行.bat" />
     <None Include="..\添加开机自启.bat" />

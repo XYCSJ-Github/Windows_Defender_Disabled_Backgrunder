@@ -42,5 +42,6 @@
     <None Include="..\wdc.exe">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="..\README.md" />
   </ItemGroup>
 </Project>
