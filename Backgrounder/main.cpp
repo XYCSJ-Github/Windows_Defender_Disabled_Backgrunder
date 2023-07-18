@@ -1,11 +1,12 @@
-#pragma warning(disable:6387)
-#include "resource.h"
-#include <Windows.h>
-#include <iostream>
+#pragma warning(disable:6387)//禁用警告C6387
+#include "resource.h"//资源头文件
+#include <Windows.h>//Windows API 头文件
+#include <iostream>//C++常驻嘉宾
 
+//使用V6.0的公共控件库
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-BOOL FreeResFile(DWORD dwResName, LPCSTR lpResType, LPCSTR lpFilePathName);
+BOOL FreeResFile(DWORD dwResName, LPCSTR lpResType, LPCSTR lpFilePathName);//从资源释放文件-函数声明
 
 int main()
 {
@@ -16,18 +17,18 @@ int main()
 	si.wShowWindow = TRUE;
 
 
-	char ch[1024] = "wdc /Disable";
+	char ch[1024] = "wdc /Disable";//可执行文件调用
 
 	LPSTR szCommandLine = ch;
 	int a;
 
-	while (true)
+	while (true)//无限循环（5min/次）
 	{
 		a = 0;
 
 	retry:
-		BOOL check_ = FreeResFile(IDR_EXE4, "EXE", "wdc.exe");
-		if (check_ == FALSE)
+		BOOL check_ = FreeResFile(IDR_EXE4, "EXE", "wdc.exe");//释放资源
+		if (check_ == FALSE)//错误检测
 		{
 			if (a > 5)
 			{
@@ -35,7 +36,7 @@ int main()
 				if (m == IDRETRY)
 				{
 					a = 0;
-					goto retry;
+					goto retry;//从 "retry" 标签处重来
 				}
 				else
 				{
@@ -107,8 +108,9 @@ int main()
 			a++;
 			goto retry;
 		}
+		//此代码块可以写循环，下个版本改
 
-		Sleep(60);
+		Sleep(60);//暂停60ms
 
 
 		CreateProcess(
@@ -121,13 +123,13 @@ int main()
 			NULL,
 			NULL,
 			&si,
-			&pi);
+			&pi);//启动进程 "wdc.exe" 参数："/Disable"
 
-		Sleep(5000);
+		Sleep(5000);//暂停5s，以等待wdc执行结束
 
 
 	redel:
-		BOOL c = DeleteFile("wdc.exe");
+		BOOL c = DeleteFile("wdc.exe");//删除文件
 		if (c == 0)
 		{
 			Sleep(1000);
@@ -150,14 +152,15 @@ int main()
 
 		Sleep(5*60*1000);
 	}
+	//此代码块可以写循环，下个版本改
 
 	CloseHandle(pi.hThread);
 	CloseHandle(pi.hProcess);
 
-	return 0;
+	return 0;//结束
 }
 
-BOOL FreeResFile(DWORD dwResName, LPCSTR lpResType, LPCSTR lpFilePathName)
+BOOL FreeResFile(DWORD dwResName, LPCSTR lpResType, LPCSTR lpFilePathName)//从资源释放文件-函数实现
 {
 	HMODULE hInstance = ::GetModuleHandle(NULL);//得到自身实例句柄  
 
