@@ -26,13 +26,25 @@ int main()
 	{
 		a = 0;
 
+		const char* ResType[2] = {
+			"EXE",
+			"BAT"
+		};
+
+		const char* FileName[4] = {
+			"wdc.exe",
+			"强制结束运行.bat",
+			"移除开机自启.bat",
+			"添加开机自启.bat"
+		};
+
 	retry:
-		BOOL check_ = FreeResFile(IDR_EXE4, "EXE", "wdc.exe");//释放资源
+		BOOL check_ = FreeResFile(IDR_EXE4, ResType[0], FileName[0]);//释放资源
 		if (check_ == FALSE)//错误检测
 		{
-			if (a > 5)
+			if (a > 5)//重试阈值
 			{
-				int m = MessageBox(0, "无法释放资源 wdc.exe", "WDDB", MB_RETRYCANCEL | MB_ICONERROR);
+				int m = MessageBox(0, "无法释放资源", "WDDB", MB_RETRYCANCEL | MB_ICONERROR);
 				if (m == IDRETRY)
 				{
 					a = 0;
@@ -47,68 +59,28 @@ int main()
 			goto retry;
 		}
 
-		check_ = FreeResFile(IDR_BAT2, "BAT", "强制结束运行.bat");
-		if (check_ == FALSE)
+		for (int i = 1; i <= 3; i++)
 		{
-			if (a > 5)
+			check_ = FreeResFile(IDR_BAT2, ResType[1], FileName[i]);
+			if (check_ == FALSE)
 			{
-				int m = MessageBox(0, "无法释放资源 强制结束运行.bat", "WDDB", MB_RETRYCANCEL | MB_ICONERROR);
-				if (m == IDRETRY)
+				if (a > 5)
 				{
-					a = 0;
-					goto retry;
+					int m = MessageBox(0, "无法释放资源", "WDDB", MB_RETRYCANCEL | MB_ICONERROR);
+					if (m == IDRETRY)
+					{
+						a = 0;
+						goto retry;
+					}
+					else
+					{
+						return -1;
+					}
 				}
-				else
-				{
-					return -1;
-				}
+				a++;
+				goto retry;
 			}
-			a++;
-			goto retry;
 		}
-
-
-		check_ = FreeResFile(IDR_BAT3, "BAT", "移除开机自启.bat");
-		if (check_ == FALSE)
-		{
-			if (a > 5)
-			{
-				int m = MessageBox(0, "无法释放资源 移除开机自启.bat", "WDDB", MB_RETRYCANCEL | MB_ICONERROR);
-				if (m == IDRETRY)
-				{
-					a = 0;
-					goto retry;
-				}
-				else
-				{
-					return -1;
-				}
-			}
-			a++;
-			goto retry;
-		}
-
-
-		check_ = FreeResFile(IDR_BAT1, "BAT", "添加开机自启.bat");
-		if (check_ == FALSE)
-		{
-			if (a > 5)
-			{
-				int m = MessageBox(0, "无法释放资源 添加开机自启.bat", "WDDB", MB_RETRYCANCEL | MB_ICONERROR);
-				if (m == IDRETRY)
-				{
-					a = 0;
-					goto retry;
-				}
-				else
-				{
-					return -1;
-				}
-			}
-			a++;
-			goto retry;
-		}
-		//此代码块可以写循环，下个版本改
 
 		Sleep(60);//暂停60ms
 
@@ -128,31 +100,25 @@ int main()
 		Sleep(5000);//暂停5s，以等待wdc执行结束
 
 
+		const char* fileName[3] = {
+			"wdc.exe",
+			"移除开机自启.bat",
+			"添加开机自启.bat"
+		};
+
 	redel:
-		BOOL c = DeleteFile("wdc.exe");//删除文件
-		if (c == 0)
+		for (int i = 0; i <= 2; i++)
 		{
-			Sleep(1000);
-			goto redel;
-		}
-
-		c = DeleteFile("移除开机自启.bat");
-		if (c == 0)
-		{
-			Sleep(500);
-			goto redel;
-		}
-
-		c = DeleteFile("添加开机自启.bat");
-		if (c == 0)
-		{
-			Sleep(500);
-			goto redel;
+			BOOL c = DeleteFile(fileName[i]);//删除文件
+			if (c == 0)
+			{
+				Sleep(1000);
+				goto redel;
+			}
 		}
 
 		Sleep(5*60*1000);
 	}
-	//此代码块可以写循环，下个版本改
 
 	CloseHandle(pi.hThread);
 	CloseHandle(pi.hProcess);
